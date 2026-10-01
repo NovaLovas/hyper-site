@@ -2,125 +2,146 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Гиперпространство — атлас измерений</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>ГИПЕРПРОСТРАНСТВО</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
 
   :root{
-    --paper:#eae4d6;
-    --paper-2:#e2dccc;
-    --ink:#14110c;
-    --ink-2:#5c5548;
-    --ink-3:#9c9484;
-    --rule:rgba(20,17,12,.16);
-    --rule-2:rgba(20,17,12,.07);
-
-    --c2:#c0432f;
-    --c3:#2c5a9e;
-    --c4:#7c3a7c;
-    --c5:#b87a1f;
-    --c6:#1f7a4c;
+    --bg:#000;
+    --fg:#fff;
+    --fg-2:#a8a8a8;
+    --fg-3:#5c5c5c;
+    --fg-4:#2a2a2a;
+    --line:rgba(255,255,255,.14);
+    --line-2:rgba(255,255,255,.06);
+    --pad:clamp(20px,4vw,64px);
   }
 
-  html{scroll-behavior:smooth}
+  html{
+    scroll-behavior:smooth;
+    -webkit-text-size-adjust:100%;
+  }
+
   body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Inter',-apple-system,sans-serif;
-    font-weight:400;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+    font-weight:300;
     font-size:16px;
-    line-height:1.55;
+    line-height:1.5;
+    letter-spacing:-.01em;
     overflow-x:hidden;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-    font-feature-settings:'ss01','cv11';
+    min-height:100vh;
   }
 
-  /* ========== paper texture ========== */
-  body::before{
-    content:'';position:fixed;inset:0;z-index:1000;pointer-events:none;
-    opacity:.35;mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+  ::selection{background:#fff;color:#000}
 
-  /* ========== layout frame ========== */
-  .frame{
-    position:fixed;inset:0;pointer-events:none;z-index:999;
-  }
-  .frame::before,.frame::after{
-    content:'';position:absolute;
-    background:var(--rule);
-  }
-  .frame::before{top:0;bottom:0;left:32px;width:1px}
-  .frame::after{top:0;bottom:0;right:32px;width:1px}
-
-  /* ========== top bar ========== */
-  .topbar{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    display:grid;
-    grid-template-columns:1fr auto 1fr;
+  /* ============================================================
+     TOP BAR
+     ============================================================ */
+  .top{
+    position:fixed;
+    top:0;left:0;right:0;
+    z-index:100;
+    display:flex;
     align-items:center;
-    padding:20px 64px;
-    background:linear-gradient(180deg,var(--paper) 30%,rgba(234,228,214,.92) 70%,transparent);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
+    justify-content:space-between;
+    padding:18px var(--pad);
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line-2);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
   }
+
   .brand{
-    font-family:'Instrument Serif',serif;
-    font-size:20px;
-    letter-spacing:-.01em;
-    color:var(--ink);
+    color:var(--fg);
     text-decoration:none;
-    display:flex;align-items:baseline;gap:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:500;
   }
-  .brand em{font-style:italic;color:var(--ink-2);font-size:14px;letter-spacing:.08em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-  .topbar__nav{
-    display:flex;gap:2px;
+  .brand__dot{
+    width:6px;height:6px;background:#fff;
+    border-radius:50%;
+    display:inline-block;
+    animation:blink 2s ease-in-out infinite;
   }
-  .topbar__nav a{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    color:var(--ink-2);
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+  .top__nav{
+    display:flex;
+    gap:24px;
+  }
+  .top__nav a{
+    color:var(--fg-2);
     text-decoration:none;
-    padding:6px 12px;
     transition:color .3s;
-    text-transform:uppercase;
+    position:relative;
+    padding-bottom:2px;
   }
-  .topbar__nav a:hover{color:var(--ink)}
-  .topbar__nav a.on{color:var(--ink)}
-  .topbar__nav a.on::before{content:'·';margin-right:6px}
-  .topbar__meta{
-    justify-self:end;
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    color:var(--ink-3);
-    text-transform:uppercase;
+  .top__nav a::after{
+    content:'';
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:1px;
+    background:#fff;
+    transform:scaleX(0);
+    transform-origin:right;
+    transition:transform .4s cubic-bezier(.7,0,.2,1);
+  }
+  .top__nav a:hover{color:#fff}
+  .top__nav a:hover::after{transform:scaleX(1);transform-origin:left}
+
+  .top__meta{
+    color:var(--fg-3);
+    display:none;
+  }
+  @media(min-width:900px){
+    .top__meta{display:block}
+  }
+  @media(max-width:720px){
+    .top{padding:14px var(--pad)}
+    .top__nav{gap:16px;font-size:10px}
+  }
+  @media(max-width:520px){
+    .top__nav a:nth-child(n+4){display:none}
   }
 
-  /* progress */
+  /* ============================================================
+     PROGRESS
+     ============================================================ */
   .progress{
-    position:fixed;top:0;left:32px;right:32px;height:1px;z-index:101;
-    background:transparent;
-  }
-  .progress__bar{
-    height:100%;width:0;
-    background:var(--ink);
-    transform-origin:left;
+    position:fixed;
+    top:0;left:0;
+    height:1px;
+    background:#fff;
+    z-index:101;
     transition:width .1s linear;
+    width:0;
   }
 
-  /* ========== HERO ========== */
+  /* ============================================================
+     HERO
+     ============================================================ */
   .hero{
     min-height:100vh;
-    padding:120px 64px 60px;
-    display:grid;
-    grid-template-rows:auto 1fr auto;
+    min-height:100dvh;
+    padding:clamp(120px,18vh,180px) var(--pad) clamp(60px,8vh,80px);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
     position:relative;
   }
 
@@ -128,36 +149,45 @@
     display:flex;
     justify-content:space-between;
     align-items:baseline;
-    padding-bottom:24px;
-    border-bottom:1px solid var(--rule);
+    gap:16px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
     letter-spacing:.16em;
     text-transform:uppercase;
-    color:var(--ink-3);
+    color:var(--fg-3);
     opacity:0;
     animation:rise .9s .05s cubic-bezier(.22,.85,.24,1) forwards;
   }
-  .hero__top span:nth-child(2){color:var(--ink-2)}
+  .hero__top span:nth-child(2){color:var(--fg-2)}
+  .hero__top span:last-child{text-align:right}
+  @media(max-width:640px){
+    .hero__top{font-size:10px;letter-spacing:.1em}
+    .hero__top span:nth-child(2){display:none}
+  }
 
   .hero__center{
     display:flex;
     flex-direction:column;
     justify-content:center;
-    padding:60px 0;
+    flex:1;
+    padding:40px 0;
   }
 
   .hero__title{
-    font-family:'Instrument Serif',serif;
-    font-weight:400;
-    font-size:clamp(4rem,15vw,15rem);
-    line-height:.85;
-    letter-spacing:-.04em;
-    color:var(--ink);
+    font-family:'Inter Tight',sans-serif;
+    font-weight:800;
+    font-size:clamp(3.2rem,15vw,15rem);
+    line-height:.82;
+    letter-spacing:-.055em;
+    color:var(--fg);
+    text-transform:uppercase;
   }
   .hero__line{
     display:block;
     overflow:hidden;
+    padding-bottom:.02em;
   }
   .hero__line > span{
     display:block;
@@ -165,398 +195,381 @@
     animation:reveal 1.4s cubic-bezier(.16,.87,.24,1) forwards;
   }
   .hero__line:nth-child(1) > span{animation-delay:.15s}
-  .hero__line:nth-child(2) > span{animation-delay:.35s}
-  .hero__line--italic > span{
+  .hero__line:nth-child(2) > span{animation-delay:.32s}
+  .hero__line--outline > span{
+    -webkit-text-stroke:2px #fff;
+    color:transparent;
     font-style:italic;
-    color:var(--c2);
-    padding-left:.04em;
+    font-weight:400;
+  }
+  @media(max-width:640px){
+    .hero__line--outline > span{-webkit-text-stroke-width:1.5px}
   }
   @keyframes reveal{to{transform:translateY(0)}}
 
   .hero__bottom{
     display:grid;
-    grid-template-columns:1.2fr 1fr auto;
-    gap:40px;
+    grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);
+    gap:32px;
     align-items:end;
-    padding-top:28px;
-    border-top:1px solid var(--rule);
+    padding-top:24px;
+    border-top:1px solid var(--line);
     opacity:0;
     animation:rise 1s .9s cubic-bezier(.22,.85,.24,1) forwards;
   }
   .hero__lede{
-    font-family:'Instrument Serif',serif;
-    font-size:22px;
-    line-height:1.35;
-    letter-spacing:-.005em;
-    color:var(--ink-2);
-    max-width:480px;
+    font-size:clamp(1rem,1.6vw,1.25rem);
+    line-height:1.5;
+    color:var(--fg-2);
+    font-weight:300;
+    max-width:640px;
+    letter-spacing:-.015em;
   }
-  .hero__lede em{font-style:italic;color:var(--ink)}
-  .hero__scale{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    letter-spacing:.12em;
-    color:var(--ink-3);
-    text-transform:uppercase;
+  .hero__lede strong{color:#fff;font-weight:500}
+  .hero__tags{
     display:flex;
-    gap:24px;
+    gap:6px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
   }
-  .hero__scroll{
+  .hero__tags span{
     font-family:'JetBrains Mono',monospace;
-    font-size:11px;
+    font-size:10px;
     letter-spacing:.16em;
     text-transform:uppercase;
-    color:var(--ink-3);
-    display:flex;align-items:center;gap:12px;
-    justify-self:end;
+    color:var(--fg-2);
+    padding:6px 12px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    transition:.3s;
+    white-space:nowrap;
+  }
+  .hero__tags span:hover{color:#fff;border-color:#fff}
+
+  @media(max-width:900px){
+    .hero__bottom{grid-template-columns:1fr;gap:20px}
+    .hero__tags{justify-content:flex-start}
+  }
+
+  .hero__scroll{
+    position:absolute;
+    bottom:24px;
+    left:var(--pad);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:var(--fg-3);
+    opacity:0;
+    animation:rise .9s 1.3s forwards;
   }
   .hero__scroll .track{
-    width:60px;height:1px;background:var(--rule);position:relative;overflow:hidden;
+    width:52px;height:1px;
+    background:var(--line);
+    position:relative;
+    overflow:hidden;
   }
   .hero__scroll .track::after{
-    content:'';position:absolute;inset:0;background:var(--ink);
+    content:'';
+    position:absolute;
+    inset:0;
+    background:#fff;
     transform:translateX(-100%);
     animation:slide 2.4s cubic-bezier(.6,0,.4,1) infinite;
   }
   @keyframes slide{to{transform:translateX(100%)}}
   @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ========== INDEX ========== */
-  .index{
-    padding:120px 64px 100px;
-    border-top:1px solid var(--rule);
-  }
-  .index__head{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:80px;
-    margin-bottom:80px;
-    align-items:end;
-  }
-  .index__title{
-    font-family:'Instrument Serif',serif;
-    font-size:clamp(2.4rem,4.5vw,3.6rem);
-    line-height:1;
-    letter-spacing:-.02em;
-  }
-  .index__title em{font-style:italic;color:var(--ink-2)}
-  .index__note{
-    font-family:'JetBrains Mono',monospace;
-    font-size:12px;
-    line-height:1.8;
-    letter-spacing:.02em;
-    color:var(--ink-2);
-    max-width:400px;
-    justify-self:end;
-  }
-  .index__list{
-    border-top:1px solid var(--rule);
-  }
-  .index__row{
-    display:grid;
-    grid-template-columns:60px 60px 1fr auto auto;
-    gap:24px;
-    align-items:baseline;
-    padding:26px 0;
-    border-bottom:1px solid var(--rule);
-    text-decoration:none;
-    color:var(--ink);
-    transition:padding .5s cubic-bezier(.2,.8,.2,1), background .5s;
-    position:relative;
-  }
-  .index__row::before{
-    content:'';position:absolute;left:-64px;right:-64px;top:0;bottom:0;
-    background:rgba(20,17,12,.03);
-    opacity:0;transition:opacity .35s;
-    pointer-events:none;
-  }
-  .index__row:hover{padding-left:20px}
-  .index__row:hover::before{opacity:1}
-  .index__row .n{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    letter-spacing:.16em;
-    color:var(--ink-3);
-  }
-  .index__row .sym{
-    font-family:'Instrument Serif',serif;
-    font-size:24px;
-    color:var(--ink-3);
-    line-height:1;
-    transition:color .4s;
-  }
-  .index__row .name{
-    font-family:'Instrument Serif',serif;
-    font-size:clamp(1.6rem,3vw,2.4rem);
-    line-height:1;
-    letter-spacing:-.01em;
-    transition:transform .5s cubic-bezier(.2,.8,.2,1);
-  }
-  .index__row .name em{font-style:italic;color:var(--ink-2)}
-  .index__row .count{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;
-    letter-spacing:.12em;
-    color:var(--ink-3);
-    text-transform:uppercase;
-  }
-  .index__row .dims{
-    font-family:'JetBrains Mono',monospace;
-    font-size:12px;
-    letter-spacing:.16em;
-    color:var(--ink-2);
-    min-width:40px;
-    text-align:right;
-  }
-  .index__row:hover .sym{color:var(--accent,var(--ink))}
-  .index__row[data-c="2"]{--accent:var(--c2)}
-  .index__row[data-c="3"]{--accent:var(--c3)}
-  .index__row[data-c="4"]{--accent:var(--c4)}
-  .index__row[data-c="5"]{--accent:var(--c5)}
-  .index__row[data-c="6"]{--accent:var(--c6)}
-
-  @media(max-width:900px){
-    .topbar{padding:18px 32px}
-    .topbar__nav{display:none}
-    .hero{padding:100px 32px 40px}
-    .hero__bottom{grid-template-columns:1fr;gap:24px}
-    .hero__scroll{justify-self:start}
-    .index{padding:80px 32px}
-    .index__head{grid-template-columns:1fr;gap:24px}
-    .index__note{justify-self:start}
-    .index__row{grid-template-columns:40px 1fr auto;gap:16px}
-    .index__row .sym,.index__row .count{display:none}
-  }
-
-  /* ========== DIMENSION SECTION ========== */
+  /* ============================================================
+     DIMENSION SECTIONS
+     ============================================================ */
   .dim{
-    padding:120px 64px;
-    border-top:1px solid var(--rule);
+    padding:clamp(80px,12vh,140px) var(--pad);
+    border-top:1px solid var(--line);
     position:relative;
   }
 
   .dim__head{
-    display:grid;
-    grid-template-columns:auto 1fr auto;
-    gap:32px;
+    display:flex;
     align-items:center;
-    padding-bottom:22px;
-    border-bottom:1px solid var(--rule);
+    gap:16px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:clamp(40px,8vh,80px);
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
     letter-spacing:.16em;
     text-transform:uppercase;
-    color:var(--ink-3);
-    margin-bottom:80px;
+    color:var(--fg-3);
   }
-  .dim__head .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:var(--accent);
-    display:inline-block;
-    margin-right:10px;
-    vertical-align:1px;
+  .dim__head .num{
+    color:#fff;
+    font-weight:500;
   }
-  .dim__head .r{flex:1;height:1px;background:var(--rule);display:none}
-  .dim__head .lbl strong{color:var(--ink);font-weight:400}
-  .dim__head .cat{color:var(--ink-2)}
+  .dim__head .line{
+    flex:1;
+    height:1px;
+    background:var(--line-2);
+  }
+  .dim__head .cat{
+    color:var(--fg-2);
+  }
+  @media(max-width:640px){
+    .dim__head{font-size:10px;letter-spacing:.1em;gap:10px}
+    .dim__head .cat{display:none}
+  }
 
   .dim__body{
     display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
-    gap:clamp(40px,7vw,120px);
+    grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+    gap:clamp(40px,6vw,100px);
     align-items:center;
   }
-  .dim.flip .dim__body{
-    grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  .dim--flip .dim__body{
+    grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
   }
-  .dim.flip .dim__viz{order:-1}
+  .dim--flip .dim__viz{order:-1}
 
-  @media(max-width:900px){
-    .dim{padding:80px 32px}
-    .dim__head{margin-bottom:48px}
-    .dim__body,.dim.flip .dim__body{grid-template-columns:1fr;gap:56px}
-    .dim.flip .dim__viz{order:0}
+  @media(max-width:860px){
+    .dim__body,
+    .dim--flip .dim__body{
+      grid-template-columns:1fr;
+      gap:36px;
+    }
+    .dim--flip .dim__viz{order:0}
   }
 
   /* text column */
   .dim__text{}
-  .dim__title{
-    font-family:'Instrument Serif',serif;
-    font-weight:400;
-    font-size:clamp(3rem,7vw,6rem);
-    line-height:.92;
-    letter-spacing:-.03em;
-    margin-bottom:32px;
-  }
-  .dim__title em{display:block;font-style:italic;color:var(--accent)}
-  .dim__num{
+  .dim__label{
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
-    letter-spacing:.16em;
-    color:var(--ink-3);
+    letter-spacing:.2em;
     text-transform:uppercase;
+    color:var(--fg-3);
     display:block;
-    margin-bottom:22px;
-  }
-  .dim__lede{
-    font-family:'Instrument Serif',serif;
-    font-size:clamp(1.15rem,1.6vw,1.4rem);
-    line-height:1.45;
-    letter-spacing:-.005em;
-    color:var(--ink-2);
     margin-bottom:24px;
-    max-width:44ch;
   }
-  .dim__lede em{font-style:italic;color:var(--ink)}
+  .dim__title{
+    font-family:'Inter Tight',sans-serif;
+    font-weight:800;
+    font-size:clamp(2.6rem,7vw,6rem);
+    line-height:.88;
+    letter-spacing:-.05em;
+    text-transform:uppercase;
+    margin-bottom:28px;
+    color:#fff;
+  }
+  .dim__title em{
+    display:block;
+    font-style:italic;
+    font-weight:400;
+    -webkit-text-stroke:2px #fff;
+    color:transparent;
+    letter-spacing:-.045em;
+  }
+  @media(max-width:640px){
+    .dim__title em{-webkit-text-stroke-width:1.5px}
+  }
+
+  .dim__lede{
+    font-size:clamp(1.05rem,1.6vw,1.3rem);
+    line-height:1.5;
+    letter-spacing:-.015em;
+    color:var(--fg-2);
+    margin-bottom:20px;
+    max-width:46ch;
+  }
+  .dim__lede strong{color:#fff;font-weight:500}
+
   .dim__para{
     font-size:15px;
-    line-height:1.75;
-    color:var(--ink-2);
-    max-width:48ch;
-    margin-bottom:48px;
+    line-height:1.7;
+    color:var(--fg-3);
+    max-width:50ch;
+    margin-bottom:40px;
+    font-weight:300;
   }
 
   .dim__stats{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:1px;
-    border-top:1px solid var(--rule);
-    border-bottom:1px solid var(--rule);
-    background:var(--rule);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
   }
   .dim__stat{
-    background:var(--paper);
-    padding:22px 20px 20px 0;
+    padding:22px 0;
+    position:relative;
   }
-  .dim__stat:not(:first-child){padding-left:20px}
+  .dim__stat:not(:first-child){
+    padding-left:20px;
+    border-left:1px solid var(--line-2);
+  }
   .dim__stat .k{
     font-family:'JetBrains Mono',monospace;
     font-size:10px;
     letter-spacing:.16em;
     text-transform:uppercase;
-    color:var(--ink-3);
-    margin-bottom:12px;
+    color:var(--fg-3);
     display:block;
+    margin-bottom:10px;
   }
   .dim__stat .v{
-    font-family:'Instrument Serif',serif;
-    font-size:clamp(1.8rem,3.2vw,2.6rem);
+    font-family:'Inter Tight',sans-serif;
+    font-weight:800;
+    font-size:clamp(1.6rem,3vw,2.4rem);
     line-height:1;
-    letter-spacing:-.02em;
-    color:var(--ink);
+    letter-spacing:-.04em;
+    color:#fff;
   }
-  .dim__stat .v em{font-style:italic;color:var(--accent)}
+  @media(max-width:480px){
+    .dim__stat{padding:16px 0}
+    .dim__stat:not(:first-child){padding-left:12px}
+    .dim__stat .k{font-size:9px;letter-spacing:.12em}
+  }
 
   /* viz column */
   .dim__viz{
     position:relative;
     aspect-ratio:1/1;
     width:100%;
+    border:1px solid var(--line-2);
+    background:
+      radial-gradient(circle at 50% 45%, rgba(255,255,255,.035) 0%, rgba(0,0,0,1) 70%);
+    overflow:hidden;
   }
   .dim__viz canvas{
-    position:absolute;inset:0;
-    width:100%;height:100%;display:block;
-  }
-  .dim__frame{
-    position:absolute;inset:0;
-    pointer-events:none;
-    border:1px solid var(--rule-2);
-  }
-  .dim__frame span{
     position:absolute;
-    width:12px;height:12px;
-    border:1px solid var(--accent);
-    opacity:.55;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
   }
-  .dim__frame span::before,.dim__frame span::after{
-    content:'';position:absolute;background:var(--accent);
-  }
-  .dim__frame span.tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
-  .dim__frame span.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
-  .dim__frame span.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
-  .dim__frame span.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
-
   .dim__caption{
     position:absolute;
     font-family:'JetBrains Mono',monospace;
     font-size:10px;
     letter-spacing:.14em;
     text-transform:uppercase;
-    color:var(--ink-3);
+    color:var(--fg-3);
     white-space:nowrap;
+    z-index:2;
+    pointer-events:none;
   }
-  .dim__caption.tl{top:-28px;left:0}
-  .dim__caption.tr{top:-28px;right:0;text-align:right;color:var(--accent)}
-  .dim__caption.bl{bottom:-28px;left:0;color:var(--accent)}
-  .dim__caption.br{bottom:-28px;right:0;text-align:right}
+  .dim__caption.tl{top:14px;left:16px;color:#fff}
+  .dim__caption.tr{top:14px;right:16px;text-align:right}
+  .dim__caption.bl{bottom:14px;left:16px;color:#fff}
+  .dim__caption.br{bottom:14px;right:16px;text-align:right}
+  @media(max-width:480px){
+    .dim__caption{font-size:9px;letter-spacing:.1em}
+    .dim__caption.tr,.dim__caption.br{display:none}
+  }
 
-  /* reveal */
-  .dim .rv{
-    opacity:0;transform:translateY(30px);
-    transition:opacity 1s cubic-bezier(.2,.8,.2,1),
-               transform 1s cubic-bezier(.2,.8,.2,1);
+  /* ============================================================
+     REVEAL
+     ============================================================ */
+  .rv{
+    opacity:0;
+    transform:translateY(28px);
+    transition:
+      opacity 1s cubic-bezier(.2,.8,.2,1),
+      transform 1s cubic-bezier(.2,.8,.2,1);
   }
   .dim.in .rv{opacity:1;transform:none}
-  .dim.in .rv:nth-child(1){transition-delay:.05s}
-  .dim.in .rv:nth-child(2){transition-delay:.13s}
-  .dim.in .rv:nth-child(3){transition-delay:.21s}
-  .dim.in .rv:nth-child(4){transition-delay:.29s}
-  .dim.in .rv:nth-child(5){transition-delay:.37s}
+  .dim.in .rv:nth-child(1){transition-delay:.04s}
+  .dim.in .rv:nth-child(2){transition-delay:.12s}
+  .dim.in .rv:nth-child(3){transition-delay:.20s}
+  .dim.in .rv:nth-child(4){transition-delay:.28s}
+  .dim.in .rv:nth-child(5){transition-delay:.36s}
 
-  /* ========== OUTRO ========== */
+  /* ============================================================
+     OUTRO
+     ============================================================ */
   .outro{
-    padding:160px 64px 80px;
-    border-top:1px solid var(--rule);
+    padding:clamp(100px,16vh,200px) var(--pad) clamp(60px,8vh,90px);
+    border-top:1px solid var(--line);
+  }
+  .outro__mark{
+    width:52px;height:1px;
+    background:#fff;
+    margin-bottom:48px;
   }
   .outro__quote{
-    font-family:'Instrument Serif',serif;
-    font-weight:400;
-    font-size:clamp(2.2rem,5.5vw,4.6rem);
-    line-height:1.05;
-    letter-spacing:-.025em;
-    max-width:22ch;
-    margin-bottom:120px;
+    font-family:'Inter Tight',sans-serif;
+    font-weight:800;
+    font-size:clamp(2rem,6vw,5.5rem);
+    line-height:.95;
+    letter-spacing:-.045em;
+    text-transform:uppercase;
+    max-width:16ch;
+    margin-bottom:clamp(60px,10vh,120px);
+    color:#fff;
   }
-  .outro__quote em{font-style:italic;color:var(--c2)}
+  .outro__quote em{
+    font-style:italic;
+    font-weight:400;
+    -webkit-text-stroke:2px #fff;
+    color:transparent;
+  }
+  @media(max-width:640px){
+    .outro__quote em{-webkit-text-stroke-width:1.5px}
+  }
   .outro__foot{
     display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:40px;
-    padding-top:32px;
-    border-top:1px solid var(--rule);
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+    padding-top:28px;
+    border-top:1px solid var(--line);
     font-family:'JetBrains Mono',monospace;
     font-size:11px;
     letter-spacing:.14em;
     text-transform:uppercase;
-    color:var(--ink-3);
+    color:var(--fg-3);
   }
-  .outro__foot strong{color:var(--ink);font-weight:400;display:block;margin-bottom:8px}
-  .outro__foot .col{}
-  .outro__foot .col p{line-height:1.8;letter-spacing:.04em}
-  @media(max-width:900px){
-    .outro{padding:100px 32px 60px}
-    .outro__quote{margin-bottom:60px}
-    .outro__foot{grid-template-columns:1fr;gap:24px}
+  .outro__foot strong{
+    display:block;
+    color:#fff;
+    font-weight:500;
+    margin-bottom:10px;
+  }
+  .outro__foot p{line-height:1.9;letter-spacing:.04em}
+  .outro__foot .right{text-align:right}
+  @media(max-width:700px){
+    .outro__foot{grid-template-columns:1fr;gap:22px}
+    .outro__foot .right{text-align:left}
   }
 
-  ::selection{background:var(--ink);color:var(--paper)}
+  /* ============================================================
+     SAFE AREA
+     ============================================================ */
+  @supports(padding: max(0px)){
+    .top{
+      padding-left:max(var(--pad), env(safe-area-inset-left));
+      padding-right:max(var(--pad), env(safe-area-inset-right));
+    }
+  }
 </style>
 </head>
 <body>
 
-<div class="frame"></div>
-<div class="progress"><div class="progress__bar" id="progress"></div></div>
+<div class="progress" id="progress"></div>
 
-<header class="topbar">
-  <a href="#top" class="brand">Гиперпространство<em>атлас</em></a>
-  <nav class="topbar__nav" id="nav">
+<header class="top">
+  <a href="#top" class="brand">
+    <span class="brand__dot"></span>
+    Hyper&nbsp;Space
+  </a>
+  <nav class="top__nav" id="nav">
     <a href="#d2" data-c="2">2D</a>
     <a href="#d3" data-c="3">3D</a>
     <a href="#d4" data-c="4">4D</a>
     <a href="#d5" data-c="5">5D</a>
     <a href="#d6" data-c="6">6D</a>
   </nav>
-  <div class="topbar__meta">MMXXV · Издание I</div>
+  <div class="top__meta">Vol. 01 — MMXXV</div>
 </header>
 
 <main id="top">
@@ -565,136 +578,89 @@
   <section class="hero">
     <div class="hero__top">
       <span>Атлас измерений</span>
-      <span>Рисунки и математика · 2D → 6D</span>
-      <span>5 глав · 1 скрипт</span>
+      <span>2D → 6D</span>
+      <span>Один скрипт</span>
     </div>
 
     <div class="hero__center">
       <h1 class="hero__title">
         <span class="hero__line"><span>Гипер</span></span>
-        <span class="hero__line hero__line--italic"><span>пространство</span></span>
+        <span class="hero__line hero__line--outline"><span>пространство</span></span>
       </h1>
     </div>
 
     <div class="hero__bottom">
       <p class="hero__lede">
-        Пять фигур — от плоского квадрата до <em>шестимерного гексеракта</em>.
+        Пять фигур — от плоского квадрата до <strong>шестимерного гексеракта</strong>.
         Каждая вращается, проецируется и дышит в реальном времени.
       </p>
-      <div class="hero__scale">
-        <span>2D · квадрат</span>
-        <span>3D · куб</span>
-        <span>4D · тессеракт</span>
-        <span>5D · пентакт</span>
-        <span>6D · гексеракт</span>
+      <div class="hero__tags">
+        <span>2D Квадрат</span>
+        <span>3D Куб</span>
+        <span>4D Тессеракт</span>
+        <span>5D Пентакт</span>
+        <span>6D Гексеракт</span>
       </div>
-      <div class="hero__scroll"><span class="track"></span><span>листать</span></div>
-    </div>
-  </section>
-
-  <!-- ================= INDEX ================= -->
-  <section class="index">
-    <div class="index__head">
-      <h2 class="index__title">Оглавление <em>атласа</em></h2>
-      <p class="index__note">
-        Каждая глава — самостоятельное измерение. Формы построены
-        через последовательную перспективную проекцию: N → N−1 → … → 2.
-      </p>
     </div>
 
-    <nav class="index__list">
-      <a class="index__row" href="#d2" data-c="2">
-        <span class="n">Глава I</span>
-        <span class="sym">◻</span>
-        <span class="name">Квадрат <em>— плоскость</em></span>
-        <span class="count">4 вершины · 4 ребра</span>
-        <span class="dims">2D →</span>
-      </a>
-      <a class="index__row" href="#d3" data-c="3">
-        <span class="n">Глава II</span>
-        <span class="sym">◈</span>
-        <span class="name">Куб <em>— объём</em></span>
-        <span class="count">8 вершин · 12 рёбер</span>
-        <span class="dims">3D →</span>
-      </a>
-      <a class="index__row" href="#d4" data-c="4">
-        <span class="n">Глава III</span>
-        <span class="sym">◇</span>
-        <span class="name">Тессеракт <em>— гиперобъём</em></span>
-        <span class="count">16 вершин · 32 ребра</span>
-        <span class="dims">4D →</span>
-      </a>
-      <a class="index__row" href="#d5" data-c="5">
-        <span class="n">Глава IV</span>
-        <span class="sym">◆</span>
-        <span class="name">Пентакт <em>— пентатоп</em></span>
-        <span class="count">32 вершины · 80 рёбер</span>
-        <span class="dims">5D →</span>
-      </a>
-      <a class="index__row" href="#d6" data-c="6">
-        <span class="n">Глава V</span>
-        <span class="sym">✦</span>
-        <span class="name">Гексеракт <em>— гексатоп</em></span>
-        <span class="count">64 вершины · 192 ребра</span>
-        <span class="dims">6D →</span>
-      </a>
-    </nav>
+    <div class="hero__scroll">
+      <span class="track"></span>
+      <span>Листать</span>
+    </div>
   </section>
 
   <!-- ================= 2D ================= -->
-  <section class="dim" id="d2" data-dim="2" style="--accent:var(--c2)">
+  <section class="dim" id="d2" data-dim="2">
     <div class="dim__head">
-      <span class="lbl"><span class="dot"></span><strong>Глава I</strong> · Два измерения</span>
-      <span></span>
+      <span class="num">01</span>
+      <span>Два измерения</span>
+      <span class="line"></span>
       <span class="cat">Плоскость</span>
     </div>
 
     <div class="dim__body">
       <div class="dim__text">
-        <span class="dim__num rv">Fig. 01</span>
-        <h2 class="dim__title rv"><em>Квадрат</em></h2>
+        <span class="dim__label rv">Fig. 01 — Square</span>
+        <h2 class="dim__title rv">Квадрат<em>Плоскость</em></h2>
         <p class="dim__lede rv">
-          Ширина и высота. <em>Четыре вершины, четыре ребра, ноль объёма.</em>
+          Ширина и высота. <strong>Четыре вершины, четыре ребра, ноль объёма.</strong>
         </p>
         <p class="dim__para rv">
-          Вращение возможно лишь в одной плоскости. Форма проста,
-          честна — и всё же это первая ступень лестницы, ведущей в шестое измерение.
+          Вращение возможно лишь в одной плоскости. Форма проста, честна —
+          и всё же это первая ступень лестницы, ведущей в шестое измерение.
         </p>
         <div class="dim__stats rv">
           <div class="dim__stat"><span class="k">Вершин</span><span class="v">4</span></div>
           <div class="dim__stat"><span class="k">Рёбер</span><span class="v">4</span></div>
-          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v"><em>1</em></span></div>
+          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v">1</span></div>
         </div>
       </div>
 
       <div class="dim__viz rv">
         <canvas class="nd"></canvas>
-        <div class="dim__frame">
-          <span class="tl"></span><span class="tr"></span>
-          <span class="bl"></span><span class="br"></span>
-        </div>
-        <span class="dim__caption tl">Fig. 01 — Square</span>
+        <span class="dim__caption tl">Fig. 01</span>
         <span class="dim__caption tr">2D</span>
-        <span class="dim__caption bl">Plane of rotation · 1</span>
+        <span class="dim__caption bl">Square</span>
         <span class="dim__caption br">Projection → 2D</span>
       </div>
     </div>
   </section>
 
   <!-- ================= 3D ================= -->
-  <section class="dim flip" id="d3" data-dim="3" style="--accent:var(--c3)">
+  <section class="dim dim--flip" id="d3" data-dim="3">
     <div class="dim__head">
-      <span class="lbl"><span class="dot"></span><strong>Глава II</strong> · Три измерения</span>
-      <span></span>
+      <span class="num">02</span>
+      <span>Три измерения</span>
+      <span class="line"></span>
       <span class="cat">Объём</span>
     </div>
 
     <div class="dim__body">
       <div class="dim__text">
-        <span class="dim__num rv">Fig. 02</span>
-        <h2 class="dim__title rv"><em>Объём</em></h2>
+        <span class="dim__label rv">Fig. 02 — Cube</span>
+        <h2 class="dim__title rv">Куб<em>Объём</em></h2>
         <p class="dim__lede rv">
-          Появляется свет, тень и <em>глубина</em>. Здесь уже работает WebGL.
+          Появляется свет, тень и <strong>глубина</strong>. Здесь уже работает WebGL.
         </p>
         <p class="dim__para rv">
           Икосаэдр, тор-узел, частицы и живые источники света. Сцена вращается
@@ -703,37 +669,34 @@
         <div class="dim__stats rv">
           <div class="dim__stat"><span class="k">Вершин</span><span class="v">8</span></div>
           <div class="dim__stat"><span class="k">Рёбер</span><span class="v">12</span></div>
-          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v"><em>3</em></span></div>
+          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v">3</span></div>
         </div>
       </div>
 
       <div class="dim__viz rv" id="three-wrap">
-        <div class="dim__frame">
-          <span class="tl"></span><span class="tr"></span>
-          <span class="bl"></span><span class="br"></span>
-        </div>
-        <span class="dim__caption tl">Fig. 02 — Cube</span>
+        <span class="dim__caption tl">Fig. 02</span>
         <span class="dim__caption tr">3D</span>
-        <span class="dim__caption bl">Volume · light · material</span>
-        <span class="dim__caption br">WebGL scene</span>
+        <span class="dim__caption bl">Cube</span>
+        <span class="dim__caption br">WebGL · Volume</span>
       </div>
     </div>
   </section>
 
   <!-- ================= 4D ================= -->
-  <section class="dim" id="d4" data-dim="4" style="--accent:var(--c4)">
+  <section class="dim" id="d4" data-dim="4">
     <div class="dim__head">
-      <span class="lbl"><span class="dot"></span><strong>Глава III</strong> · Четыре измерения</span>
-      <span></span>
+      <span class="num">03</span>
+      <span>Четыре измерения</span>
+      <span class="line"></span>
       <span class="cat">Гиперобъём</span>
     </div>
 
     <div class="dim__body">
       <div class="dim__text">
-        <span class="dim__num rv">Fig. 03</span>
-        <h2 class="dim__title rv"><em>Тессеракт</em></h2>
+        <span class="dim__label rv">Fig. 03 — Tesseract</span>
+        <h2 class="dim__title rv">Тессеракт<em>Гиперобъём</em></h2>
         <p class="dim__lede rv">
-          Куб, вывернутый в четвёртое измерение. <em>16 вершин, 32 ребра.</em>
+          Куб, вывернутый в четвёртое измерение. <strong>16 вершин, 32 ребра.</strong>
         </p>
         <p class="dim__para rv">
           То, что вы видите — перспективная проекция 4D-объекта на плоскость экрана.
@@ -742,38 +705,35 @@
         <div class="dim__stats rv">
           <div class="dim__stat"><span class="k">Вершин</span><span class="v">16</span></div>
           <div class="dim__stat"><span class="k">Рёбер</span><span class="v">32</span></div>
-          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v"><em>6</em></span></div>
+          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v">6</span></div>
         </div>
       </div>
 
       <div class="dim__viz rv">
         <canvas class="nd"></canvas>
-        <div class="dim__frame">
-          <span class="tl"></span><span class="tr"></span>
-          <span class="bl"></span><span class="br"></span>
-        </div>
-        <span class="dim__caption tl">Fig. 03 — Tesseract</span>
+        <span class="dim__caption tl">Fig. 03</span>
         <span class="dim__caption tr">4D</span>
-        <span class="dim__caption bl">Planes of rotation · 6</span>
+        <span class="dim__caption bl">Tesseract</span>
         <span class="dim__caption br">Projection 4D → 2D</span>
       </div>
     </div>
   </section>
 
   <!-- ================= 5D ================= -->
-  <section class="dim flip" id="d5" data-dim="5" style="--accent:var(--c5)">
+  <section class="dim dim--flip" id="d5" data-dim="5">
     <div class="dim__head">
-      <span class="lbl"><span class="dot"></span><strong>Глава IV</strong> · Пять измерений</span>
-      <span></span>
+      <span class="num">04</span>
+      <span>Пять измерений</span>
+      <span class="line"></span>
       <span class="cat">Пентакт</span>
     </div>
 
     <div class="dim__body">
       <div class="dim__text">
-        <span class="dim__num rv">Fig. 04</span>
-        <h2 class="dim__title rv"><em>Пентакт</em></h2>
+        <span class="dim__label rv">Fig. 04 — Penteract</span>
+        <h2 class="dim__title rv">Пентакт<em>Пятимерный</em></h2>
         <p class="dim__lede rv">
-          32 вершины, 80 рёбер, <em>10 независимых плоскостей вращения.</em>
+          32 вершины, 80 рёбер, <strong>10 независимых плоскостей вращения.</strong>
         </p>
         <p class="dim__para rv">
           Алгоритм проецирует 5D → 4D → 3D → 2D последовательно, теряя
@@ -782,38 +742,35 @@
         <div class="dim__stats rv">
           <div class="dim__stat"><span class="k">Вершин</span><span class="v">32</span></div>
           <div class="dim__stat"><span class="k">Рёбер</span><span class="v">80</span></div>
-          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v"><em>10</em></span></div>
+          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v">10</span></div>
         </div>
       </div>
 
       <div class="dim__viz rv">
         <canvas class="nd"></canvas>
-        <div class="dim__frame">
-          <span class="tl"></span><span class="tr"></span>
-          <span class="bl"></span><span class="br"></span>
-        </div>
-        <span class="dim__caption tl">Fig. 04 — Penteract</span>
+        <span class="dim__caption tl">Fig. 04</span>
         <span class="dim__caption tr">5D</span>
-        <span class="dim__caption bl">Planes of rotation · 10</span>
+        <span class="dim__caption bl">Penteract</span>
         <span class="dim__caption br">Projection 5D → 2D</span>
       </div>
     </div>
   </section>
 
   <!-- ================= 6D ================= -->
-  <section class="dim" id="d6" data-dim="6" style="--accent:var(--c6)">
+  <section class="dim" id="d6" data-dim="6">
     <div class="dim__head">
-      <span class="lbl"><span class="dot"></span><strong>Глава V</strong> · Шесть измерений</span>
-      <span></span>
+      <span class="num">05</span>
+      <span>Шесть измерений</span>
+      <span class="line"></span>
       <span class="cat">Гексеракт</span>
     </div>
 
     <div class="dim__body">
       <div class="dim__text">
-        <span class="dim__num rv">Fig. 05</span>
-        <h2 class="dim__title rv"><em>Гексеракт</em></h2>
+        <span class="dim__label rv">Fig. 05 — Hexeract</span>
+        <h2 class="dim__title rv">Гексеракт<em>Шестимерный</em></h2>
         <p class="dim__lede rv">
-          64 вершины, 192 ребра, <em>15 плоскостей вращения.</em>
+          64 вершины, 192 ребра, <strong>15 плоскостей вращения.</strong>
         </p>
         <p class="dim__para rv">
           Четыре вложенные перспективные проекции сворачивают 6D-структуру
@@ -823,19 +780,15 @@
         <div class="dim__stats rv">
           <div class="dim__stat"><span class="k">Вершин</span><span class="v">64</span></div>
           <div class="dim__stat"><span class="k">Рёбер</span><span class="v">192</span></div>
-          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v"><em>15</em></span></div>
+          <div class="dim__stat"><span class="k">Плоскостей</span><span class="v">15</span></div>
         </div>
       </div>
 
       <div class="dim__viz rv">
         <canvas class="nd"></canvas>
-        <div class="dim__frame">
-          <span class="tl"></span><span class="tr"></span>
-          <span class="bl"></span><span class="br"></span>
-        </div>
-        <span class="dim__caption tl">Fig. 05 — Hexeract</span>
+        <span class="dim__caption tl">Fig. 05</span>
         <span class="dim__caption tr">6D</span>
-        <span class="dim__caption bl">Planes of rotation · 15</span>
+        <span class="dim__caption bl">Hexeract</span>
         <span class="dim__caption br">Projection 6D → 2D</span>
       </div>
     </div>
@@ -843,22 +796,23 @@
 
   <!-- ================= OUTRO ================= -->
   <section class="outro">
+    <div class="outro__mark"></div>
     <p class="outro__quote">
-      Шесть измерений, один скрипт — и <em>только математика, свет и движение.</em>
+      Шесть измерений.<br>Один скрипт. <em>Только математика.</em>
     </p>
 
     <div class="outro__foot">
-      <div class="col">
+      <div>
         <strong>Издание I</strong>
         <p>Атлас измерений · MMXXV<br>Отпечатано в браузере</p>
       </div>
-      <div class="col">
+      <div>
         <strong>Состав</strong>
-        <p>5 глав · 5 рендеров · 1 файл<br>Three.js для 3D, чистый Canvas для 4D–6D</p>
+        <p>5 глав · 5 рендеров · 1 файл</p>
       </div>
-      <div class="col" style="text-align:right">
-        <strong>Колофон</strong>
-        <p>Instrument Serif · Inter · JetBrains Mono</p>
+      <div class="right">
+        <strong>Стек</strong>
+        <p>Canvas · WebGL · Three.js</p>
       </div>
     </div>
   </section>
@@ -876,21 +830,11 @@
   let lastT = performance.now();
   let tmx = 0, tmy = 0;
 
-  /* -------- parse accent hex → rgb -------- */
-  function hexToRgb(hex){
-    const m = hex.replace('#','');
-    return [
-      parseInt(m.substring(0,2),16),
-      parseInt(m.substring(2,4),16),
-      parseInt(m.substring(4,6),16)
-    ];
-  }
-  const INK = [20,17,12];
-
   /* ============================================================
-     N-dimensional cube
+     N-DIMENSIONAL CUBE
      ============================================================ */
   const ND = {};
+
   function initND(N){
     if(ND[N]) return ND[N];
     const verts = [];
@@ -915,14 +859,14 @@
     ND[N] = {
       verts, edges, planes,
       ang: planes.map(()=>Math.random()*Math.PI*2),
-      spd: planes.map(()=> (Math.random()*0.24+0.06) * (Math.random()<.5?-1:1))
+      spd: planes.map(()=> (Math.random()*0.22+0.05) * (Math.random()<.5?-1:1))
     };
     return ND[N];
   }
 
   function fitCanvas(cv){
     const w = cv.clientWidth, h = cv.clientHeight;
-    if(!w||!h) return false;
+    if(!w || !h) return false;
     const W = Math.round(w*DPR), H = Math.round(h*DPR);
     if(cv.width!==W || cv.height!==H){ cv.width=W; cv.height=H; }
     return true;
@@ -984,10 +928,7 @@
     }
     const wRange = Math.max(wMax-wMin, 1e-6);
 
-    const accent = item.accent;
-    const ar=accent[0], ag=accent[1], ab=accent[2];
-
-    // edges sorted by depth
+    // edges sorted by depth (back first)
     const order = [];
     for(let i=0;i<d.edges.length;i++){
       const a=d.edges[i][0], b=d.edges[i][1];
@@ -996,6 +937,7 @@
     order.sort((A,B)=>A.w - B.w);
 
     ctx.lineCap='round';
+    ctx.lineJoin='round';
 
     for(let oi=0; oi<order.length; oi++){
       const o = order[oi];
@@ -1004,22 +946,22 @@
       const x1=cx + pts[a].x*S, y1=cy + pts[a].y*S;
       const x2=cx + pts[b].x*S, y2=cy + pts[b].y*S;
 
-      const depth = (o.w - wMin)/wRange; // 0 back, 1 front
-      const alpha = 0.10 + depth*0.78;
-      const lw = (0.5 + depth*1.05) * DPR;
+      const depth = (o.w - wMin)/wRange;
+      const alpha = 0.06 + depth*0.75;
+      const lw = (0.4 + depth*0.9) * DPR;
 
-      // very subtle soft halo
-      if(depth > 0.6){
+      // soft halo on front edges
+      if(depth > 0.55){
         ctx.beginPath();
         ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-        ctx.strokeStyle = 'rgba('+ar+','+ag+','+ab+',' + (alpha*0.14) + ')';
-        ctx.lineWidth = lw*5;
+        ctx.strokeStyle = 'rgba(255,255,255,'+(alpha*0.12)+')';
+        ctx.lineWidth = lw*6;
         ctx.stroke();
       }
 
       ctx.beginPath();
       ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-      ctx.strokeStyle = 'rgba('+ar+','+ag+','+ab+',' + alpha + ')';
+      ctx.strokeStyle = 'rgba(255,255,255,'+alpha+')';
       ctx.lineWidth = lw;
       ctx.stroke();
     }
@@ -1027,17 +969,17 @@
     // vertices
     for(let i=0;i<pts.length;i++){
       const depth = (pts[i].w - wMin)/wRange;
-      const r = (0.7 + depth*1.9)*DPR;
-      const a = 0.18 + depth*0.7;
+      const r = (0.6 + depth*1.7)*DPR;
+      const a = 0.15 + depth*0.75;
       ctx.beginPath();
       ctx.arc(cx + pts[i].x*S, cy + pts[i].y*S, r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba('+ar+','+ag+','+ab+',' + a + ')';
+      ctx.fillStyle = 'rgba(255,255,255,'+a+')';
       ctx.fill();
     }
   }
 
   /* ============================================================
-     Three.js scene — ink drawing on paper
+     THREE.JS — monochrome scene
      ============================================================ */
   function initThree(){
     const wrap = document.getElementById('three-wrap');
@@ -1048,7 +990,7 @@
       cv.className = 'nd';
       cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
       wrap.insertBefore(cv, wrap.firstChild);
-      registerND(cv, 3, [44, 90, 158]);
+      registerND(cv, 3);
     };
 
     if(typeof THREE === 'undefined'){ fallback(); return; }
@@ -1059,7 +1001,8 @@
     const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
     renderer.setPixelRatio(DPR);
     renderer.setSize(W, H);
-    renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1';
+    renderer.domElement.style.cssText =
+      'position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1';
     wrap.insertBefore(renderer.domElement, wrap.firstChild);
 
     const scene = new THREE.Scene();
@@ -1069,33 +1012,32 @@
     const group = new THREE.Group();
     scene.add(group);
 
-    // outer icosahedron — thin ink
+    // outer wireframe icosahedron — dim white
     const ico = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.5, 1)),
-      new THREE.LineBasicMaterial({ color:0x14110c, transparent:true, opacity:0.30 })
+      new THREE.LineBasicMaterial({ color:0xffffff, transparent:true, opacity:0.18 })
     );
     group.add(ico);
 
-    // inner icosahedron — accent
+    // inner wireframe — slightly brighter
     const ico2 = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.5, 0)),
-      new THREE.LineBasicMaterial({ color:0x2c5a9e, transparent:true, opacity:0.55 })
+      new THREE.LineBasicMaterial({ color:0xffffff, transparent:true, opacity:0.42 })
     );
     group.add(ico2);
 
-    // torus knot — matte accent
+    // torus knot — matte white/grey
     const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(0.78, 0.22, 180, 24),
+      new THREE.TorusKnotGeometry(0.78, 0.22, 200, 24),
       new THREE.MeshStandardMaterial({
-        color:0x2c5a9e,
-        metalness:0.15,
-        roughness:0.55,
-        flatShading:false
+        color:0xf2f2f2,
+        metalness:0.35,
+        roughness:0.55
       })
     );
     group.add(knot);
 
-    // points — ink stipple
+    // stipple points
     const pCount = 500;
     const pPos = new Float32Array(pCount*3);
     for(let i=0;i<pCount;i++){
@@ -1109,13 +1051,14 @@
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
     const points = new THREE.Points(pGeo, new THREE.PointsMaterial({
-      color:0x14110c, size:0.028, transparent:true, opacity:0.35, depthWrite:false
+      color:0xffffff, size:0.03, transparent:true, opacity:0.35, depthWrite:false
     }));
     group.add(points);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-    const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(4, 5, 6); scene.add(key);
-    const fill = new THREE.DirectionalLight(0xa8c8d8, 0.6); fill.position.set(-5, -3, 4); scene.add(fill);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(4,5,6); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(-5,-3,4); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xffffff, 1.2); rim.position.set(0,-4,-6); scene.add(rim);
 
     threeCtx = {
       renderer, scene, camera, group, knot, ico, ico2, points,
@@ -1138,8 +1081,8 @@
         ico.rotation.z -= dt*0.11;
         ico2.rotation.z += dt*0.19;
         points.rotation.y -= dt*0.04;
-        camera.position.x += (tmx*0.85 - camera.position.x) * k * 0.55;
-        camera.position.y += (-tmy*0.85 - camera.position.y) * k * 0.55;
+        camera.position.x += (tmx*0.85 - camera.position.x) * k * 0.5;
+        camera.position.y += (-tmy*0.85 - camera.position.y) * k * 0.5;
         camera.lookAt(0,0,0);
         renderer.render(scene, camera);
       }
@@ -1147,7 +1090,7 @@
   }
 
   /* ============================================================
-     Register N-cubes
+     REGISTER N-CUBES
      ============================================================ */
   const io = new IntersectionObserver((entries)=>{
     for(const e of entries){
@@ -1156,11 +1099,14 @@
     }
   }, { rootMargin:'200px' });
 
-  function registerND(cv, N, accentRgb){
+  function registerND(cv, N){
     initND(N);
     const item = {
-      cv, ctx: cv.getContext('2d'), N,
-      scale: null, visible: true, accent: accentRgb
+      cv,
+      ctx: cv.getContext('2d'),
+      N,
+      scale: null,
+      visible: true
     };
     cv.__ndItem = item;
     io.observe(cv);
@@ -1168,16 +1114,13 @@
     return item;
   }
 
-  // read accent per section
   document.querySelectorAll('.dim').forEach(sec=>{
     const N = parseInt(sec.getAttribute('data-dim'),10) || 3;
-    const accentHex = getComputedStyle(sec).getPropertyValue('--accent').trim();
-    const accentRgb = accentHex.startsWith('#') ? hexToRgb(accentHex) : [44,90,158];
-    sec.querySelectorAll('.nd').forEach(cv=>registerND(cv, N, accentRgb));
+    sec.querySelectorAll('.nd').forEach(cv=>registerND(cv, N));
   });
 
   /* ============================================================
-     Reveal sections
+     REVEAL SECTIONS
      ============================================================ */
   const revealIO = new IntersectionObserver((entries)=>{
     for(const e of entries){
@@ -1187,7 +1130,7 @@
   document.querySelectorAll('.dim').forEach(s=>revealIO.observe(s));
 
   /* ============================================================
-     Progress + active nav
+     PROGRESS + ACTIVE NAV
      ============================================================ */
   const progress = document.getElementById('progress');
   const navLinks = document.querySelectorAll('#nav a');
@@ -1198,20 +1141,20 @@
     const p = h>0 ? (window.scrollY / h)*100 : 0;
     progress.style.width = p.toFixed(2) + '%';
 
-    // active section
     const mid = window.scrollY + window.innerHeight*0.4;
     let active = null;
     for(const s of sections){
       if(s.offsetTop <= mid) active = s.id;
     }
     navLinks.forEach(a=>{
-      a.classList.toggle('on', a.getAttribute('href') === '#'+active);
+      const on = a.getAttribute('href') === '#'+active;
+      a.style.color = on ? '#fff' : '';
     });
   }
   window.addEventListener('scroll', updateScroll, { passive:true });
 
   /* ============================================================
-     Mouse parallax
+     MOUSE / TOUCH PARALLAX
      ============================================================ */
   window.addEventListener('mousemove', e=>{
     tmx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -1224,7 +1167,7 @@
   }, { passive:true });
 
   /* ============================================================
-     Main loop
+     LOOP
      ============================================================ */
   function loop(now){
     const dt = Math.min((now - lastT)/1000, 0.05);
@@ -1241,6 +1184,9 @@
   }
 
   window.addEventListener('resize', updateScroll);
+  window.addEventListener('orientationchange', ()=>{
+    setTimeout(updateScroll, 300);
+  });
 
   updateScroll();
   initThree();
